@@ -9,7 +9,7 @@
   </parent>
   <groupId>cz.jpmad</groupId>
   <artifactId>UniversalConfigVisualizer</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>UniversalConfigVisualizer</name>
   <description>UniversalConfigVisualizer</description>
   <url />
@@ -36,12 +36,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc</artifactId>
-        <exclusions>
-            <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-logging</artifactId>
-            </exclusion>
-        </exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- YML -->
     <dependency>
