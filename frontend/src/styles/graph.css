@@ -1,0 +1,28 @@
+#cy {
+  width: 100%;
+  height: calc(100vh - 28px);
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #334155;
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.4);
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: rgba(17, 24, 39, 0.96);
+  color: #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  max-width: 300px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
+  border: 1px solid #334155;
+}
+
+.tooltip strong {
+  color: #ffffff;
+}
+

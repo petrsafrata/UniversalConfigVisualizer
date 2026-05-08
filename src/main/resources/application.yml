@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: UniversalConfigVisualizer
+
+# Server settings
+server:
+  port: ${BACKEND_PORT:8080} # Port the backend will listen on, stored in environment variables with fallback to 8080
+  shutdown: graceful # # Set to enable graceful shutdown, huh? allow running requests to complete before shutting down the server
+  forward-headers-strategy: framework # Settings for correct processing of X-Forwarded-* headers, which is important when deployed behind a reverse proxy or load balancer
+  servlet:
+    context-path: /api # Base path for all API endpoints, e.g. /api/connections, /api/audit, etc.
+  compression:
+    enabled: true # Enable compression, which can improve performance by transferring less data over the network.
+    min-response-size: 1024 # Minimum response size in bytes for compression, in this case 1 KB
+    mime-types: application/json,text/html,text/plain,text/css,application/javascript # List of MIME types that will be compressed, in this case plain text and JSON responses
+  tomcat:
+    threads:
+      max: ${TOMCAT_THREADS_MAX:200} # Maximum number of threads for processing requests, stored in environment variables with fallback to 200
+      min-spare: ${TOMCAT_THREADS_MIN_SPARE:10} # Minimum number of spare threads that are ready for immediate use, stored in environment variables with fallback to 10
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:10000} # Maximum number of simultaneous connections that Tomcat can handle, stored in environment variables with a fallback to 10000
+    accept-count: ${TOMCAT_ACCEPT_COUNT:100} # The maximum number of requests that can be queued for processing, stored in environment variables, with a fallback to 100.
+    connection-timeout: ${TOMCAT_CONNECTION_TIMEOUT:5s} # The amount of time Tomcat will wait for a completed request before terminating it, stored in environment variables with a fallback of 5 seconds.

@@ -1,0 +1,18 @@
+version: "3.9"
+
+# =========================
+# APPLICATION (Spring Boot + React)
+# =========================
+services:
+  app:
+    build: .
+    container_name: configviz
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - configviz-network
+
+networks:
+  configviz-network:
+    driver: bridge
