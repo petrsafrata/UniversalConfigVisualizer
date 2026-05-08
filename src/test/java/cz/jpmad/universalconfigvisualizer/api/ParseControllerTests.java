@@ -34,6 +34,7 @@ class ParseControllerTests {
                 """;
 
         mockMvc.perform(post("/api/parse")
+                        .contextPath("/api")
                         .contentType("application/x-yaml")
                         .content(yaml))
                 .andExpect(status().isOk())
@@ -50,6 +51,7 @@ class ParseControllerTests {
         String invalidYaml = "services: [app: bad";
 
         mockMvc.perform(post("/api/parse")
+                        .contextPath("/api")
                         .contentType("application/x-yaml")
                         .content(invalidYaml))
                 .andExpect(status().isBadRequest())

@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ---
 
+## [1.0.0] - Initial release fixes
+
+**Date:** 2026-05-08
+
+### Fixed
+- Incorrect context path for API endpoints in tests
+- Dependency and config for log4j2
+- Dockerfile build issues with multi-stage build and missing files
+
+---
+
 ## [1.0.0] - Initial stable release
 
 **Date:** 2026-05-08

@@ -10,7 +10,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="cz.jpmad.dbscope" level="debug" additivity="false">
+        <Logger name="cz.jpmad.universalconfigvisualizer" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 
