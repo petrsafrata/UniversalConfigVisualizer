@@ -13,10 +13,7 @@ jobs:
   publish-image:
     name: Build and Push Image to GHCR
     runs-on: ubuntu-latest
-    if: >-
-      ${ {
-        github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
-      } }
+    if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repository
