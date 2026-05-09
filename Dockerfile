@@ -16,7 +16,8 @@ FROM maven:3.9.9-eclipse-temurin-17 AS backend-build
 WORKDIR /workspace
 COPY . .
 COPY --from=frontend-build /frontend/dist/ /workspace/src/main/resources/static/
-RUN ./mvnw -q -DskipTests package \
+RUN chmod +x ./mvnw \
+    && ./mvnw -q -DskipTests package \
     && cp /workspace/target/*.jar /workspace/app.jar
 
 # Stage 3: Runtime (Apache + Backend)
