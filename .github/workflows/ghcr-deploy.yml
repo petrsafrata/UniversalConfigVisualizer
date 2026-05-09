@@ -1,113 +1,43 @@
 name: Publish Docker Image
 
 on:
-  workflow_run:
-    workflows: ["BA+FA CI + Auto Release"]
-    types: [completed]
-    branches: ["master"]
+  push:
+    tags:
+      - "v*.*.*"
 
 permissions:
   contents: read
-  actions: read
   packages: write
 
 jobs:
-  release-guard:
-    name: Verify release job and tag
-    runs-on: ubuntu-latest
-    outputs:
-      should_publish: ${{ steps.check.outputs.should_publish }}
-
-    steps:
-      - name: Check release job and tag existence
-        id: check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const runId = context.payload.workflow_run.id;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const releaseJobName = "Tag + Release (when VERSION changed)";
-
-            const jobs = await github.paginate(
-              github.rest.actions.listJobsForWorkflowRun,
-              { owner, repo, run_id: runId, per_page: 100 }
-            );
-
-            const releaseJob = jobs.find((job) => job.name === releaseJobName);
-
-            // Publish Docker image only if the release job really succeeded.
-            const releaseJobSucceeded = releaseJob?.conclusion === "success";
-
-            const headSha = context.payload.workflow_run.head_sha;
-
-            const tags = await github.paginate(
-              github.rest.repos.listTags,
-              { owner, repo, per_page: 100 }
-            );
-
-            const tagForSha = tags.find(
-              (tag) =>
-                tag.commit &&
-                tag.commit.sha === headSha &&
-                tag.name &&
-                tag.name.startsWith("v")
-            );
-
-            core.info(`Release job found: ${Boolean(releaseJob)}`);
-            core.info(`Release job conclusion: ${releaseJob?.conclusion ?? "not found"}`);
-            core.info(`Tag for SHA found: ${tagForSha?.name ?? "none"}`);
-
-            core.setOutput(
-              "should_publish",
-              releaseJobSucceeded && Boolean(tagForSha)
-            );
-
-  publish-image:
+  publish:
     name: Build and Push Image to GHCR
     runs-on: ubuntu-latest
-    needs: release-guard
-    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.release-guard.outputs.should_publish == 'true' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Compute image name
-        id: image
+      - name: Extract metadata
+        id: meta
         shell: bash
         run: |
-          OWNER_LOWER="${GITHUB_REPOSITORY_OWNER,,}"
-          echo "name=ghcr.io/${OWNER_LOWER}/configviz" >> "$GITHUB_OUTPUT"
+          VERSION="${GITHUB_REF_NAME#v}"
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_NAME="ghcr.io/${OWNER_LC}/configviz"
 
-      - name: Read VERSION
-        id: version
-        shell: bash
-        run: |
-          VERSION=$(cat VERSION | tr -d ' \n\r\t')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "image=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GHCR
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Docker metadata
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ steps.image.outputs.name }}
-          tags: |
-            type=raw,value=latest,enable=${{ github.event_name == 'workflow_run' }}
-            type=raw,value=${{ steps.version.outputs.version }},enable=${{ github.event_name == 'workflow_run' }}
-            type=sha,prefix=sha-
 
       - name: Build and push image
         uses: docker/build-push-action@v7
@@ -115,6 +45,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.image }}:latest
           platforms: linux/amd64
