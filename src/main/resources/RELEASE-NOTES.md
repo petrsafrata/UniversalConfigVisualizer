@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 
 ---
 
-## [1.0.3] - Initial release fixes
+## [1.0.4] - Initial release fixes
 
 **Date:** 2026-05-09
 
