@@ -1,5 +1,5 @@
 # Stage 1: Build frontend (React)
-FROM node:20-alpine AS frontend-build
+FROM node:26-alpine AS frontend-build
 LABEL author="petrsafrata"
 LABEL description="Dockerfile for UniversalConfigVisualizer, a tool for visualizing and managing application configurations."
 LABEL version="1.0.0"
