@@ -12,7 +12,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Build backend (Spring Boot)
-FROM maven:3.9.9-eclipse-temurin-17 AS backend-build
+FROM maven:3.9.15-eclipse-temurin-26 AS backend-build
 WORKDIR /workspace
 COPY . .
 COPY --from=frontend-build /frontend/dist/ /workspace/src/main/resources/static/
